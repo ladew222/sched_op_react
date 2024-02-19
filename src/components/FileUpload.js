@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { Box, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import '../index.css';
 
 import PropTypes from 'prop-types'; // Import PropTypes for prop type checking
@@ -62,6 +61,7 @@ const FileUpload = ({ onSuccess }) => {
             setResults(cleanedData); // Update the results state with the fetched data
             onSuccess(dataWithFileInfo); // Call the onSuccess prop with the cleaned data
             setIsUploaded(true); // Set to true after successful upload
+            toast.success("File successfully uploaded and analyzed!");
         } catch (error) {
             console.error('Error uploading file:', error);
             toast.error(`Error uploading file: ${error.message}`);

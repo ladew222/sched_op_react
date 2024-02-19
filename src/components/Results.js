@@ -4,7 +4,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ResultsTable from './ResultsTable';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Checkbox } from '@mui/material';
-
+import { toast } from 'react-toastify';
 
 
 
@@ -46,6 +46,7 @@ const Results = ({ ...props }) => {
         setBlockedTimeSlotOptions(formattedMeetingTimes);
       } catch (error) {
         console.error('Error fetching meeting times:', error);
+        toast.error(`Error fetching meeting times: ${error.message}`);
         // Handle the error appropriately
       }
     };

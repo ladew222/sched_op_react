@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../index.css';
-
+import { toast } from 'react-toastify';
 
 const localizer = momentLocalizer(moment);
 
@@ -60,33 +60,42 @@ const ResultsTable = ({ results }) => {
 
   // Function to convert data to CSV format and trigger download
   const handleDownloadCSV = () => {
-    // Define the header for CSV
-    const header = ['Section', 'Title', 'Min Credit', 'Timeslot', 'Location', 'Faculty'];
-    // Map the data to a CSV format
-    const csvContent = [
-      header.join(','), // header row first
-      ...results.sorted_schedule[0].schedule.map(row => [
-        row.section,
-        row.title,
-        row.minCredit,
-        row.timeslot,
-        `"${row.bldg} ${row.room}"`, // Wrap in quotes to handle any commas
-        row.faculty1
-      ].join(',')) // join each row's columns with a comma
-    ].join('\r\n'); // join each row with a new line
 
-    // Create a Blob with the CSV content and the appropriate type
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    
-    // Create a temporary link element and trigger the download
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'results.csv'; // File name for download
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      // Define the header for CSV
+      const header = ['Section', 'Title', 'Min Credit', 'Timeslot', 'Location', 'Faculty'];
+      // Map the data to a CSV format
+      const csvContent = [
+        header.join(','), // header row first
+        ...results.sorted_schedule[0].schedule.map(row => [
+          row.section,
+          row.title,
+          row.minCredit,
+          row.timeslot,
+          `"${row.bldg} ${row.room}"`, // Wrap in quotes to handle any commas
+          row.faculty1
+        ].join(',')) // join each row's columns with a comma
+      ].join('\r\n'); // join each row with a new line
+
+      // Create a Blob with the CSV content and the appropriate type
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      
+      // Create a temporary link element and trigger the download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'results.csv'; // File name for download
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+        toast.success("CSV file downloaded successfully!");
+    } catch (error) {
+        console.error('Error generating CSV:', error);
+        toast.error("Failed to download CSV file.");
+    }
+
+
   };
 
    // Determine the week that contains the first event
@@ -101,27 +110,36 @@ const ResultsTable = ({ results }) => {
 
    // Function to handle the download of the ICS file
   const handleDownloadICS = () => {
-    const calendarEvents = results.calendar_events.map(event => ({
-      // ... your existing event mapping
-      id: event.section_name, // Ensure each event has a unique identifier
-      description:  `${event.section_name} ${event.faculty1}`, // Add a description if available
-      location: `${event.bldg} ${event.room}`, // Set the location of the event
-      DTSTART: new Date(event.start),
-      SUMMARY:event.section_name,
-      DTEND: new Date(event.end),
-    }));
 
-    const icsData = generateICS(calendarEvents);
-    const blob = new Blob([icsData], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
+    try {
+        const calendarEvents = results.calendar_events.map(event => ({
+          // ... your existing event mapping
+          id: event.section_name, // Ensure each event has a unique identifier
+          description:  `${event.section_name} ${event.faculty1}`, // Add a description if available
+          location: `${event.bldg} ${event.room}`, // Set the location of the event
+          DTSTART: new Date(event.start),
+          SUMMARY:event.section_name,
+          DTEND: new Date(event.end),
+        }));
     
-    // Create a link element, click it, and then remove it from the DOM
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'calendar.ics'; // Set the filename for the download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+        const icsData = generateICS(calendarEvents);
+        const blob = new Blob([icsData], { type: 'text/calendar' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create a link element, click it, and then remove it from the DOM
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'calendar.ics'; // Set the filename for the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("ICS file downloaded successfully!");
+    } catch (error) {
+        console.error('Error generating ICS:', error);
+        toast.error("Failed to download ICS file.");
+    }
+
+
   };
 
 
