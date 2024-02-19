@@ -40,7 +40,7 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
         <img src="/logo.webp" alt="Class Scheduler Logo" style={{ marginRight: 20, height: '40px', flexGrow: 0 }} />
         
         {/* Title next to the logo */}
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'white', display: 'flex', alignItems: 'center' }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'white', display: 'flex', alignItems: 'center', marginRight: '8px' }}>
           Class Scheduler
         </Typography>
 

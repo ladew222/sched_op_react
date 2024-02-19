@@ -132,10 +132,9 @@ const Results = ({ ...props }) => {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>Loaded Data</Typography>
+          <Typography><h1>Loaded Data</h1></Typography>
         </AccordionSummary>
         <AccordionDetails>
-     <h1>Loaded Data</h1>
       <TableContainer component={Paper}>
         <Table aria-label="schedule table">
           <TableHead>
