@@ -5,6 +5,8 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../index.css';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ResultsCalendar from './ResultsCalendar';
 
 
 const ResultsTable = ({ results }) => {
@@ -28,7 +30,7 @@ const ResultsTable = ({ results }) => {
       // Map the data to a CSV format
       const csvContent = [
         header.join(','), // header row first
-        ...results.sorted_schedule[0].schedule.map(row => [
+        ...results[currentIndex].schedule.map(row => [
           row.section,
           row.title,
           row.minCredit,
@@ -57,10 +59,6 @@ const ResultsTable = ({ results }) => {
     }
 
   };
-
-
-
-
 
 
   return (
@@ -111,8 +109,8 @@ const ResultsTable = ({ results }) => {
               </Table>
             </TableContainer>
          
-          {/* ... Table as before, but using currentResult */}
-          
+         
+          <ResultsCalendar events={currentResult.calendar_events} />
         </div>
         
       </div>

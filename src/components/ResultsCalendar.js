@@ -3,6 +3,8 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const localizer = momentLocalizer(moment);
 
@@ -17,39 +19,7 @@ const stringToColor = (str) => {
 };
 
 
-// Function to handle the download of the ICS file
 
-const handleDownloadICS = () => {
-try {
-    const calendarEvents = results.calendar_events.map(event => ({
-        // ... your existing event mapping
-        id: event.section_name, // Ensure each event has a unique identifier
-        description:  `${event.section_name} ${event.faculty1}`, // Add a description if available
-        location: `${event.bldg} ${event.room}`, // Set the location of the event
-        DTSTART: new Date(event.start),
-        SUMMARY:event.section_name,
-        DTEND: new Date(event.end),
-    }));
-
-    const icsData = generateICS(calendarEvents);
-    const blob = new Blob([icsData], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
-    
-    // Create a link element, click it, and then remove it from the DOM
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'calendar.ics'; // Set the filename for the download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("ICS file downloaded successfully!");
-} catch (error) {
-    console.error('Error generating ICS:', error);
-    toast.error("Failed to download ICS file.");
-}
-
-
-};
 
 
 const formatDateToICS = (date) => {
@@ -101,6 +71,41 @@ const MyCalendar = ({ events }) => {
     };
   };
 
+
+  // Function to handle the download of the ICS file
+
+const handleDownloadICS = () => {
+    try {
+        const calendarEvents = events.map(event => ({
+            // ... your existing event mapping
+            id: event.section_name, // Ensure each event has a unique identifier
+            description:  `${event.section_name} ${event.faculty1}`, // Add a description if available
+            location: `${event.bldg} ${event.room}`, // Set the location of the event
+            DTSTART: new Date(event.start),
+            SUMMARY:event.section_name,
+            DTEND: new Date(event.end),
+        }));
+    
+        const icsData = generateICS(calendarEvents);
+        const blob = new Blob([icsData], { type: 'text/calendar' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create a link element, click it, and then remove it from the DOM
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'calendar.ics'; // Set the filename for the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("ICS file downloaded successfully!");
+    } catch (error) {
+        console.error('Error generating ICS:', error);
+        toast.error("Failed to download ICS file.");
+    }
+    
+    
+    };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -122,8 +127,8 @@ const MyCalendar = ({ events }) => {
 
   return (
     <div>
-         <Button onClick={() => handleDownloadICS(currentResult.calendarEvents)}>
-            Download ICS for Result {currentIndex + 1}
+         <Button onClick={() => handleDownloadICS(events)}>
+            Download ICS for Result
           </Button>
       <Calendar
         localizer={localizer}
