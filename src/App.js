@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Results from './components/Results';
 import FileUpload from './components/FileUpload';
@@ -91,13 +91,21 @@ const handleOptimization = async () => {
     });
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      // throw new Error('Network response was not ok');
+      console.error('Data Processswing Error:', response.status, response.statusText);
+      toast.error('Data Processswing Error:'+ response.status + ": " + response.statusText); // Display error notification
+    }
+    else{
+      const result = await response.json();
+      setOptimizationResults(result); // Assuming setOptimizationResults updates the state with the optimization results
+      toast.success("Optimization successful!"); // Display success notification
     }
 
-    const result = await response.json();
-    setOptimizationResults(result); // Assuming setOptimizationResults updates the state with the optimization results
+   
+    
   } catch (error) {
     console.error('Failed to submit data:', error);
+    toast.error("Failed to submit data:" + error); // Display error notification
   }
 };
 
@@ -122,6 +130,7 @@ const handleOptimization = async () => {
             />
         )}
       </Container>
+      <ToastContainer />
     </div>
   );
 }
