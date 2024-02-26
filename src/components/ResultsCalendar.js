@@ -62,7 +62,7 @@ const MyCalendar = ({ events }) => {
     : new Date();
 
   const eventStyleGetter = (event) => {
-    const sectionPrefix = event.section_name ? event.section_name.split('-')[0] : 'Default';
+    const sectionPrefix = event.title ? event.title.split('-')[0] : 'Default';
     const color = stringToColor(sectionPrefix);
     return {
       style: {
@@ -74,37 +74,37 @@ const MyCalendar = ({ events }) => {
 
   // Function to handle the download of the ICS file
 
-const handleDownloadICS = () => {
+  const handleDownloadICS = () => {
     try {
-        const calendarEvents = events.map(event => ({
-            // ... your existing event mapping
-            id: event.section_name, // Ensure each event has a unique identifier
-            description:  `${event.section_name} ${event.faculty1}`, // Add a description if available
-            location: `${event.bldg} ${event.room}`, // Set the location of the event
-            DTSTART: new Date(event.start),
-            SUMMARY:event.section_name,
-            DTEND: new Date(event.end),
-        }));
-    
-        const icsData = generateICS(calendarEvents);
-        const blob = new Blob([icsData], { type: 'text/calendar' });
-        const url = URL.createObjectURL(blob);
-        
-        // Create a link element, click it, and then remove it from the DOM
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'calendar.ics'; // Set the filename for the download
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.success("ICS file downloaded successfully!");
+      const calendarEvents = events.map(event => ({
+        id: event.id || event.title, // Ensure each event has a unique identifier
+        start: event.start,
+        end: event.end,
+        title: event.title || 'No Title',
+        description: event.description || `${event.section_name} ${event.faculty1}`, // Add a description if available
+        location: event.location || `${event.bldg} ${event.room}`, // Set the location of the event
+      }));
+  
+      const icsData = generateICS(calendarEvents);
+      const blob = new Blob([icsData], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      
+      // Create a link element, click it, and then remove it from the DOM
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'calendar.ics'; // Set the filename for the download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success("ICS file downloaded successfully!");
     } catch (error) {
-        console.error('Error generating ICS:', error);
-        toast.error("Failed to download ICS file.");
+      console.error('Error generating ICS:', error);
+      toast.error("Failed to download ICS file.");
     }
-    
-    
-    };
+  };
+  
+  
 
   const handleClose = () => {
     setOpen(false);
