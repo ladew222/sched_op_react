@@ -46,27 +46,34 @@ const FileUpload = ({ onSuccess }) => {
             }
             const result = await response.json();
 
-            const cleanedData = cleanData(result); // Clean the data    
+            // Check if there's an error unrelated to missing columns
+            if (result.error && !result.error.startsWith("Missing columns")) {
+                throw new Error(result.error);
+            }
+
+            // Proceed with the assumption that the data is now correct
+            const cleanedData = cleanData(result.data); // Clean the data
             // Create an object with both cleaned data and file info
             const dataWithFileInfo = {
-                cleanedData: cleanedData,
+                cleanedData,
                 fileInfo: {
                     name: file.name,
                     size: file.size,
                     type: file.type || 'Unknown',
                 },
             };
-            
 
             setResults(cleanedData); // Update the results state with the fetched data
             onSuccess(dataWithFileInfo); // Call the onSuccess prop with the cleaned data
             setIsUploaded(true); // Set to true after successful upload
-            toast.success("File successfully uploaded and analyzed!");
+            toast.success(result.message || "File successfully uploaded and analyzed!");
+       
         } catch (error) {
             console.error('Error uploading file:', error);
             toast.error(`Error uploading file: ${error.message}`);
         }
     };
+
 
     const handleUpload = () => {
         if (file) {
