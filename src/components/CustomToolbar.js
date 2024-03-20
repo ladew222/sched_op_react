@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-
 
 // Styled components for better control over slider color
 const StyledSlider = styled(Slider)(({ theme }) => ({
@@ -34,18 +33,18 @@ const GradientButton = styled(Button)(({ theme }) => ({
 }));
 
 const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSliderChange }) => {
+  const [file, setStFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState('');
 
-      // State to store the selected file for uploading
-  const [studentScheduleFile, setStudentScheduleFile] = React.useState(null);
-  const [uploadStatus, setUploadStatus] = React.useState('');
+  const handleFileChange = (event) => {
+    setStFile(event.target.files[0]);
+  };
 
-
-// Inside CustomToolbar component
-  const handleFileUpload = () => {
-    if (studentScheduleFile) {
+  const handleUpload = () => {
+    if (file) {
       const formData = new FormData();
-      formData.append('file', studentScheduleFile);
-    
+      formData.append('file', file);
+
       fetch('/upload_student_schedule', {
         method: 'POST',
         body: formData,
@@ -57,80 +56,77 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
         return response.json();
       })
       .then(result => {
+        if (result.error) {
+          setUploadStatus(result.error);
+          return;
+        }
         setUploadStatus('File uploaded successfully.');
-        // Handle the successful upload here
+        // Optionally, perform an action on successful upload
+        // onOptimize(); // You can call onOptimize or similar function if needed
       })
       .catch(error => {
-        setUploadStatus('Failed to upload file.');
-        // Handle the error here
+        setUploadStatus('Failed to upload file. ' + error.message);
       });
+    } else {
+      setUploadStatus('Please select a file first.');
     }
   };
 
-    const handleFileChange = (event) => {
-      // Get the first file in the file input (if multiple files are allowed, this would need to be adjusted)
-      const file = event.target.files[0];
-      
-      // Update the studentScheduleFile state with the selected file
-      setStudentScheduleFile(file);
-      
-      // Optionally reset the upload status if you have a message being displayed from a previous upload
-      setUploadStatus('');
-    };
-
-
-
-    return (
-      <AppBar position="static" sx={{ backgroundColor: 'navy' }}>
-        <Toolbar>
-          {/* Logo and title */}
-          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-            <img src="/logo.webp" alt="Class Scheduler Logo" style={{ marginRight: 20, height: '40px' }} />
-            <Typography variant="h6" component="div" sx={{ color: 'white' }}>
-              Class Scheduler
-            </Typography>
-          </Box>
   
-          {/* File upload and info */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mr: 4 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}> {/* Add gap between elements */}
-              <input
-                accept=".csv"
-                style={{ display: 'none' }}
-                id="file-upload"
-                type="file"
-                onChange={handleFileChange}
-              />
-              <label htmlFor="file-upload">
-              <Button component="span" sx={{ color: 'white', fontSize: '0.875rem' }}> {/* Adjust font size */}
+  
+  return (
+    <AppBar position="static" sx={{ backgroundColor: 'navy' }}>
+      <Toolbar>
+        {/* Logo aligned to the far left and sized small */}
+        <img src="/logo.webp" alt="Class Scheduler Logo" style={{ marginRight: 20, height: '40px', flexGrow: 0 }} />
+        
+        {/* Title next to the logo */}
+        <Box>
+          <input
+              accept="csv/*"
+              style={{ display: 'none' }}
+              id="raised-button-St_file"
+              type="file"
+              onChange={handleFileChange}
+          />
+          <label htmlFor="raised-button-St_file">
+              <Button variant="contained" component="span" color="primary">
                   Choose File
-                </Button>
-              </label>
-              <Button onClick={handleFileUpload} sx={{ color: 'white', fontSize: '0.875rem' }}> {/* Adjust font size */}
-                Upload
               </Button>
-            </Box>
-            {fileData && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 1 }}> {/* Add margin-top */}
-                <Typography color="inherit" sx={{ my: 1 }}>
-                  {fileData.name}
-                </Typography>
-                <Typography color="inherit">
-                  File size: {(fileData.size / 1024).toFixed(2)} KB
-                </Typography>
-              </Box>
-            )}
+          </label>
+          <Button
+              variant="contained"
+              color="primary"
+              onClick={handleUpload}
+              sx={{ ml: 2 }}
+              disabled={!file}
+          >
+              Upload
+          </Button>
+            </Box>  
+
+        {fileData && (
+          <>
+            <GradientButton onClick={onOptimize}>Optimize</GradientButton>
+            <Typography color="inherit" sx={{ marginLeft: '20px', marginRight: '20px' }}>
+              {fileData.name}
+            </Typography>
+            <Typography color="inherit">
+              File size: {(fileData.size / 1024).toFixed(2)} KB
+            </Typography>
+          </>
+        )}
+
+        {/* Sliders displayed if file data is available */}
+        {fileData && (
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-around', padding: '10px 0' }}>
+            <StyledSliderBox sliderValues={sliderValues} onSliderChange={onSliderChange} />
           </Box>
-  
-          {/* Sliders */}
-          {fileData && (
-            <StyledSliderBox sliderValues={sliderValues} onSliderChange={onSliderChange}  sx={{ width: '100%' }} />
-          )}
-        </Toolbar>
-      </AppBar>
-    );
-  };
-  
+        )}
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 // Component for sliders to keep CustomToolbar clean
 const StyledSliderBox = ({ sliderValues, onSliderChange }) => (
