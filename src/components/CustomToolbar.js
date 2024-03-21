@@ -40,7 +40,7 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
     setStFile(event.target.files[0]);
   };
 
-  const handleUpload = () => {
+  const handleSf_Upload = () => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
@@ -97,8 +97,9 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
           <Button
               variant="contained"
               color="primary"
-              onClick={handleUpload}
-              sx={{ ml: 2 }}
+              size='small'
+              onClick={handleSf_Upload}
+              sx={{ padding: '6px 16px', fontSize: '0.875rem' }}
               disabled={!file}
           >
               Upload
