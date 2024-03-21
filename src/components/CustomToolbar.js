@@ -81,6 +81,12 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
         <img src="/logo.webp" alt="Class Scheduler Logo" style={{ marginRight: 20, height: '40px', flexGrow: 0 }} />
         
         {/* Title next to the logo */}
+        {!fileData && (
+          <Typography variant="h6" component="div" sx={{ color: 'white' }}>
+          Class Scheduler
+        </Typography>
+        )}
+        {fileData && (
         <Box>
           <input
               accept="csv/*"
@@ -105,6 +111,7 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
               Upload
           </Button>
             </Box>  
+        )}
 
         {fileData && (
           <>
