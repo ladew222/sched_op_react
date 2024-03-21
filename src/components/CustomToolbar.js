@@ -45,7 +45,7 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
       const formData = new FormData();
       formData.append('file', file);
 
-      fetch('/upload_student_schedule', {
+      fetch('http://127.0.0.1:5000/upload_student_schedule', {
         method: 'POST',
         body: formData,
       })
