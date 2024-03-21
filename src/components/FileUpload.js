@@ -97,7 +97,7 @@ const FileUpload = ({ onSuccess }) => {
                 />
                 <label htmlFor="raised-button-file">
                     <Button variant="contained" component="span" color="primary">
-                        Choose File
+                        Choose Schedule File
                     </Button>
                 </label>
                 <Button

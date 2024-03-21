@@ -90,8 +90,8 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
               onChange={handleFileChange}
           />
           <label htmlFor="raised-button-St_file">
-              <Button variant="contained" component="span" color="primary">
-                  Choose File
+              <Button  size='small' variant="contained" component="span" color="primary"  sx={{ padding: '6px 16px', fontSize: '0.875rem', backgroundColor: 'navy' }}>
+                  Student File
               </Button>
           </label>
           <Button
@@ -99,7 +99,7 @@ const CustomToolbar = ({ fileData, onOptimize, onHoldAll, sliderValues, onSlider
               color="primary"
               size='small'
               onClick={handleSf_Upload}
-              sx={{ padding: '6px 16px', fontSize: '0.875rem' }}
+              sx={{ padding: '6px 16px', fontSize: '0.875rem', backgroundColor: 'navy' }}
               disabled={!file}
           >
               Upload
